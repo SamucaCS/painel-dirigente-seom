@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel SEOM – Dirigente</title>
+
+    <link rel="stylesheet" href="painel-seom.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+</head>
+
+<body>
+    <div class="bg-galaxy"></div>
+
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="brand">
+                <div class="brand-logo"></div>
+                <div>
+                    <h1>Painel SEOM – Dirigente</h1>
+                    <p>Obras, solicitações e termos de visita • URE Suzano</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="page">
+        <section class="card">
+            <header class="card-header">
+                <h2>Filtros</h2>
+                <p>Refine a visualização por tema, escola e situação.</p>
+            </header>
+
+            <div class="filters-grid">
+                <div class="form-row">
+                    <label for="f-tema">Tema</label>
+                    <select id="f-tema" class="filter">
+                        <option value="">Todos</option>
+                        <option value="obras">Obras e manutenção</option>
+                        <option value="solicitacao">Solicitação de manutenção</option>
+                        <option value="termo">Termo de visita</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="f-escola">Escola / URE</label>
+                    <select id="f-escola" class="filter">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="f-status">Situação / Status</label>
+                    <select id="f-status" class="filter">
+                        <option value="">Todos</option>
+                        <option value="em_andamento">Em andamento</option>
+                        <option value="concluido">Concluído</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="cards-grid">
+            <article class="card kpi-card">
+                <span class="kpi-label">Registros</span>
+                <strong id="card-total" class="kpi-value">–</strong>
+                <span class="kpi-footer">Somatório de registros exibidos na tabela.</span>
+            </article>
+
+            <article class="card kpi-card">
+                <span class="kpi-label">Escolas atendidas</span>
+                <strong id="card-escolas" class="kpi-value">–</strong>
+                <span class="kpi-footer">Distintas dentro do filtro atual.</span>
+            </article>
+
+            <article class="card kpi-card">
+                <span class="kpi-label">Obras</span>
+                <strong id="card-obras" class="kpi-value">–</strong>
+                <span id="card-obras-perc" class="kpi-footer">–% do total</span>
+            </article>
+
+            <article class="card kpi-card">
+                <span class="kpi-label">Solicitações</span>
+                <strong id="card-solic" class="kpi-value">–</strong>
+                <span id="card-solic-perc" class="kpi-footer">–% do total</span>
+            </article>
+
+            <article class="card kpi-card">
+                <span class="kpi-label">Termos de visita</span>
+                <strong id="card-termo" class="kpi-value">–</strong>
+                <span id="card-termo-perc" class="kpi-footer">–% do total</span>
+            </article>
+
+            <article class="card kpi-card">
+                <span class="kpi-label">Em andamento</span>
+                <strong id="card-andamento" class="kpi-value">–</strong>
+                <span id="card-andamento-perc" class="kpi-footer">–% do total</span>
+            </article>
+
+            <article class="card kpi-card">
+                <span class="kpi-label">Concluídos</span>
+                <strong id="card-concluido" class="kpi-value">–</strong>
+                <span id="card-concluido-perc" class="kpi-footer">–% do total</span>
+            </article>
+        </section>
+
+        <section class="charts-grid">
+            <article class="card">
+                <header class="card-header">
+                    <h2>Distribuição por tema</h2>
+                    <p>Quantidade de registros por tipo de demanda.</p>
+                </header>
+                <div class="chart-wrapper">
+                    <canvas id="chartPorTema"></canvas>
+                </div>
+            </article>
+
+            <article class="card">
+                <header class="card-header">
+                    <h2>Status das demandas</h2>
+                    <p>Proporção de registros em andamento e concluídos.</p>
+                </header>
+                <div class="chart-wrapper">
+                    <canvas id="chartStatus"></canvas>
+                </div>
+            </article>
+        </section>
+
+        <section class="card">
+            <header class="card-header">
+                <h2>Últimos registros</h2>
+                <p>Lista dos registros mais recentes, considerando os filtros aplicados.</p>
+            </header>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tema</th>
+                            <th>Escola / URE</th>
+                            <th>Descrição</th>
+                            <th>Situação / Status</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-registros">
+                    </tbody>
+                </table>
+                <p id="empty-state" class="empty-state">Carregando registros...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <span>SEOM • Diretoria de Ensino de Suzano</span>
+        <span>Painel para acompanhamento estratégico</span>
+    </footer>
+
+    <script src="painel-seom.js"></script>
+</body>
+
+</html>
