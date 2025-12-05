@@ -2,11 +2,13 @@ const SUPABASE_URL = "https://smvlyewxhrihqqcaegnr.supabase.co";
 const SUPABASE_ANON_KEY =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtdmx5ZXd4aHJpaHFxY2FlZ25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMTQxNzYsImV4cCI6MjA3OTc5MDE3Nn0.GYQCiJGV42ud8agWyuQ_6uLswmxFPaL6tVdm3VIN8g8";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const ESCOLAS_SEOM = [
     "Unidade Regional De Ensino - Suzano",
     "ALFREDO ROBERTO",
     "ALICE ROMANOS PROFª",
     "ANDERSON DA SILVA SOARES",
+    "ANGELA SUELI P DIAS",
     "ANIS FADUL DOUTOR",
     "ANTONIO BRASILIO MENEZES DA FONSECA PROF",
     "ANTONIO GARCIA VEREADOR",
@@ -16,31 +18,44 @@ const ESCOLAS_SEOM = [
     "BATISTA RENZI",
     "BENEDITA DE CAMPOS MARCOLONGO PROFª",
     "BRASILIO MACHADO NETO COMENDADOR",
+    "CARLINDO REIS",
     "CARLOS MOLTENI PROF",
     "CHOJIRO SEGAWA",
     "DAVID JORGE CURI PROF",
+    "EDIR DO COUTO ROSA",
+    "ELIANE APARECIDA D DA SILVA",
     "EUCLIDES IGESCA",
     "GERALDO JUSTINIANO DE REZENDE SILVA PROF",
     "GILBERTO DE CARVALHO PROF",
     "GIOVANNI BATTISTA RAFFO PROF DOUTOR",
     "HELENA ZERRENNER",
+    "IIJIMA",
+    "IGNES CORREA ALLEN",
     "JACQUES YVES COUSTEAU COMANDANTE",
     "JANDYRA COUTINHO PROFª",
+    "JARDIM SAO PAULO II",
     "JOSE BENEDITO LEITE BARTHOLOMEI PROF",
     "JOSE CAMILO DE ANDRADE",
     "JOSE PAPAIZ PROF",
     "JOVIANO SATLER DE LIMA PROF",
     "JUSSARA FEITOSA DOMSCHKE PROFª",
+    "Justino Marcondes Rangel",
+    "Landia dos Santos Batista",
     "LEDA FERNANDES LOPES PROFª",
     "LUCY FRANCO KOWALSKI PROFª",
     "LUIZ BIANCONI",
     "LUIZA HIDAKA PROFª",
     "MANUEL DOS SANTOS PAIVA",
     "MARIA ELISA DE AZEVEDO CINTRA PROFª",
+    "Mario Manoel Dantas de Aquino",
+    "MARTHA CALIXTO CAZAGRANDE",
     "MASAITI SEKINE PROF",
     "MORATO DE OLIVEIRA DOUTOR",
     "OLAVO LEONEL FERREIRA PROF",
+    "OLZANETTI GOMES PROFESSOR",
     "OSWALDO DE OLIVEIRA LIMA",
+    "PARQUE DOURADO II",
+    "PAULO AMERICO PAGANUCCI",
     "PAULO KOBAYASHI PROF",
     "RAUL BRASIL PROF EE",
     "RAUL BRASIL PROF",
@@ -49,6 +64,7 @@ const ESCOLAS_SEOM = [
     "TOCHICHICO YOCHICAVA PROF",
     "TOKUZO TERAZAKI",
     "YOLANDA BASSI PROFª",
+    "ZELIA GATTAI AMADO",
     "ZEIKICHI FUKUOKA"
 ];
 
@@ -192,7 +208,7 @@ function atualizarGraficoTema(lista) {
     const termo = lista.filter(r => r.tipo === "termo").length;
 
     const labels = ["Obras", "Solicitação", "Termo de visita"];
-    const data = [obras, solicit, termo];
+    theData = [obras, solicit, termo];
 
     const ctx = document.getElementById("chartPorTema");
     if (!ctx) return;
@@ -205,7 +221,7 @@ function atualizarGraficoTema(lista) {
                 datasets: [
                     {
                         label: "Registros",
-                        data,
+                        data: theData,
                         borderRadius: 8
                     }
                 ]
@@ -225,7 +241,7 @@ function atualizarGraficoTema(lista) {
         });
     } else {
         chartTema.data.labels = labels;
-        chartTema.data.datasets[0].data = data;
+        chartTema.data.datasets[0].data = theData;
         chartTema.update();
     }
 }
@@ -233,15 +249,28 @@ function atualizarGraficoTema(lista) {
 function atualizarGraficoStatus(lista) {
     const andamento = lista.filter(r => r.status === "em_andamento").length;
     const concluido = lista.filter(r => r.status === "concluido").length;
+    const naoAtendido = lista.filter(r => r.status === "nao_atendido").length;
+
     const semStatus = lista.filter(
-        r => !r.status || (r.status !== "em_andamento" && r.status !== "concluido")
+        r =>
+            !r.status ||
+            (r.status !== "em_andamento" &&
+                r.status !== "concluido" &&
+                r.status !== "nao_atendido")
     ).length;
 
-    const labels = ["Em andamento", "Concluído", "Sem status"];
-    const data = [andamento, concluido, semStatus];
+    const labels = ["Em andamento", "Concluído", "Não atendido", "Sem status"];
+    const data = [andamento, concluido, naoAtendido, semStatus];
 
     const ctx = document.getElementById("chartStatus");
     if (!ctx) return;
+
+    const cores = [
+        "#facc15", // Em andamento  -> amarelo
+        "#22c55e", // Concluído     -> verde
+        "#ef4444", // Não atendido  -> vermelho
+        "#3b82f6"  // Sem status    -> azul
+    ];
 
     if (!chartStatus) {
         chartStatus = new Chart(ctx, {
@@ -250,7 +279,9 @@ function atualizarGraficoStatus(lista) {
                 labels,
                 datasets: [
                     {
-                        data
+                        data,
+                        backgroundColor: cores,
+                        borderWidth: 0
                     }
                 ]
             },
@@ -268,6 +299,7 @@ function atualizarGraficoStatus(lista) {
     } else {
         chartStatus.data.labels = labels;
         chartStatus.data.datasets[0].data = data;
+        chartStatus.data.datasets[0].backgroundColor = cores;
         chartStatus.update();
     }
 }
@@ -340,6 +372,8 @@ function labelStatus(status) {
             return "Em andamento";
         case "concluido":
             return "Concluído";
+        case "nao_atendido":
+            return "Não atendido";
         default:
             return status || "-";
     }
