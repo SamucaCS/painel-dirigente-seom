@@ -138,12 +138,17 @@ function filtrarRegistros() {
     const escola = document.getElementById("f-escola").value;
     const status = document.getElementById("f-status").value;
 
-    return registros.filter(r => {
-        const okTema = !tema || r.tipo === tema;
-        const okEscola = !escola || r.escola === escola;
-        const okStatus = !status || r.status === status;
-        return okTema && okEscola && okStatus;
-    });
+    return registros
+        .filter(r =>
+            r.tipo !== "bi_manutencao" &&
+            r.tipo !== "bi_manutencao_predial"
+        )
+        .filter(r => {
+            const okTema = !tema || r.tipo === tema;
+            const okEscola = !escola || r.escola === escola;
+            const okStatus = !status || r.status === status;
+            return okTema && okEscola && okStatus;
+        });
 }
 
 function atualizarCards(lista) {
@@ -208,7 +213,7 @@ function atualizarGraficoTema(lista) {
     const termo = lista.filter(r => r.tipo === "termo").length;
 
     const labels = ["Obras", "Solicitação", "Termo de visita"];
-    theData = [obras, solicit, termo];
+    const theData = [obras, solicit, termo];
 
     const ctx = document.getElementById("chartPorTema");
     if (!ctx) return;
@@ -247,11 +252,13 @@ function atualizarGraficoTema(lista) {
 }
 
 function atualizarGraficoStatus(lista) {
-    const andamento = lista.filter(r => r.status === "em_andamento").length;
-    const concluido = lista.filter(r => r.status === "concluido").length;
-    const naoAtendido = lista.filter(r => r.status === "nao_atendido").length;
+    const apenasObras = lista.filter(r => r.tipo === "obras");
 
-    const semStatus = lista.filter(
+    const andamento = apenasObras.filter(r => r.status === "em_andamento").length;
+    const concluido = apenasObras.filter(r => r.status === "concluido").length;
+    const naoAtendido = apenasObras.filter(r => r.status === "nao_atendido").length;
+
+    const semStatus = apenasObras.filter(
         r =>
             !r.status ||
             (r.status !== "em_andamento" &&
@@ -303,6 +310,7 @@ function atualizarGraficoStatus(lista) {
         chartStatus.update();
     }
 }
+
 
 function atualizarTabela(lista) {
     const tbody = document.getElementById("tabela-registros");
