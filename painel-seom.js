@@ -1,6 +1,5 @@
 const SUPABASE_URL = "https://smvlyewxhrihqqcaegnr.supabase.co";
-const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtdmx5ZXd4aHJpaHFxY2FlZ25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMTQxNzYsImV4cCI6MjA3OTc5MDE3Nn0.GYQCiJGV42ud8agWyuQ_6uLswmxFPaL6tVdm3VIN8g8";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtdmx5ZXd4aHJpaHFxY2FlZ25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMTQxNzYsImV4cCI6MjA3OTc5MDE3Nn0.GYQCiJGV42ud8agWyuQ_6uLswmxFPaL6tVdm3VIN8g8";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const ESCOLAS_SEOM = [
@@ -76,6 +75,7 @@ let chartStatus = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     popularFiltroEscola();
+    popularFiltroStatus(); // <--- Adicionado: Popula o filtro de status
     setupFiltros();
     carregarRegistros();
 });
@@ -91,6 +91,29 @@ function popularFiltroEscola() {
         select.appendChild(opt);
     });
 }
+
+// --- Nova Função ---
+function popularFiltroStatus() {
+    const select = document.getElementById("f-status");
+    if (!select) return;
+
+    // Limpa opções atuais e adiciona a padrão
+    select.innerHTML = '<option value="">Todos os status</option>';
+
+    const opcoes = [
+        { valor: "em_andamento", texto: "Em andamento" },
+        { valor: "concluido", texto: "Concluído" },
+        { valor: "nao_atendido", texto: "Não atendido" } // <--- Opção que faltava
+    ];
+
+    opcoes.forEach(op => {
+        const opt = document.createElement("option");
+        opt.value = op.valor;
+        opt.textContent = op.texto;
+        select.appendChild(opt);
+    });
+}
+// -------------------
 
 function setupFiltros() {
     const filtros = document.querySelectorAll(".filter");
@@ -162,6 +185,8 @@ function atualizarCards(lista) {
 
     const andamento = lista.filter(r => r.status === "em_andamento").length;
     const concluido = lista.filter(r => r.status === "concluido").length;
+    // Se você tiver cards para 'não atendido' no HTML, adicione o cálculo aqui:
+    // const naoAtendido = lista.filter(r => r.status === "nao_atendido").length;
 
     const escolasSet = new Set(
         lista
@@ -275,10 +300,10 @@ function atualizarGraficoStatus(lista) {
     if (!ctx) return;
 
     const cores = [
-        "#facc15", // Em andamento  -> amarelo
-        "#22c55e", // Concluído     -> verde
-        "#ef4444", // Não atendido  -> vermelho
-        "#3b82f6"  // Sem status    -> azul
+        "#facc15", // Em andamento    -> amarelo
+        "#22c55e", // Concluído       -> verde
+        "#ef4444", // Não atendido    -> vermelho
+        "#3b82f6"  // Sem status      -> azul
     ];
 
     if (!chartStatus) {
@@ -312,7 +337,6 @@ function atualizarGraficoStatus(lista) {
         chartStatus.update();
     }
 }
-
 
 function atualizarTabela(lista) {
     const tbody = document.getElementById("tabela-registros");
