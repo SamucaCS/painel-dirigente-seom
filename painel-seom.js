@@ -80,6 +80,21 @@ document.addEventListener("DOMContentLoaded", () => {
   carregarRegistros();
 });
 
+function mudarTela(telaId, botaoClicado) {
+  document.querySelectorAll(".view-section").forEach((el) => {
+    el.classList.remove("active");
+  });
+
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.classList.remove("active");
+  });
+
+  const section = document.getElementById(`view-${telaId}`);
+  if (section) section.classList.add("active");
+
+  if (botaoClicado) botaoClicado.classList.add("active");
+}
+
 function popularFiltroEscola() {
   const select = document.getElementById("f-escola");
   if (!select) return;
@@ -130,16 +145,13 @@ async function carregarRegistros() {
     if (error) console.error(error);
 
     registros = dadosBrutos.map((r) => {
-      
       if (
         r.tipo === "bi_manutencao" ||
         r.tipo === "bi_manuntecao" ||
         r.tipo === "bi_manutencao_predial"
       ) {
-       
         return { ...r, status: "concluido" };
       }
-
       return r;
     });
 
@@ -177,6 +189,7 @@ function atualizarCards(lista) {
   const obras = lista.filter((r) => r.tipo === "obras").length;
   const solicit = lista.filter((r) => r.tipo === "solicitacao").length;
   const termo = lista.filter((r) => r.tipo === "termo").length;
+
   const biManut = lista.filter(
     (r) =>
       r.tipo === "bi_manutencao" ||
@@ -345,7 +358,7 @@ function atualizarTabela(lista) {
   }
   if (empty) empty.textContent = "";
 
-  lista.slice(0, 30).forEach((r) => {
+  lista.forEach((r) => {
     const tr = document.createElement("tr");
 
     const tdTema = document.createElement("td");
@@ -385,9 +398,9 @@ function labelTema(tipo) {
       return "Solicitação de manutenção";
     case "termo":
       return "Termo de visita";
-    case "bi_manutencao": 
-    case "bi_manutencao_predial": 
-    case "bi_manuntecao": 
+    case "bi_manutencao":
+    case "bi_manutencao_predial":
+    case "bi_manuntecao":
       return "BI manutenção predial";
     default:
       return tipo || "-";
