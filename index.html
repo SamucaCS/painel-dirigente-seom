@@ -19,7 +19,7 @@
         <div class="brand">
           <div class="brand-logo"></div>
           <div>
-            <h1>Painel SEOM – Dirigente</h1>
+            <h1>Painel SEOM - Dirigente</h1>
             <p>
               Obras, solicitações, termos de visita e BI manutenção predial •
               URE Suzano
@@ -30,145 +30,376 @@
     </header>
 
     <main class="page">
-      <section class="card">
-        <header class="card-header">
-          <h2>Filtros</h2>
-          <p>Refine a visualização por tema, escola e situação.</p>
+      <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="mudarTela('geral', this)">
+          📊 Visão Geral
+        </button>
+        <button class="tab-btn" onclick="mudarTela('patrimonio', this)">
+          🏛️ Patrimônio
+        </button>
+        <button class="tab-btn" onclick="mudarTela('fiscalizacao', this)">
+          📋 Fiscalização
+        </button>
+      </nav>
+
+      <div id="view-geral" class="view-section active">
+        <section class="card">
+          <header class="card-header">
+            <h2>Filtros</h2>
+            <p>Refine a visualização por tema, escola e situação.</p>
+          </header>
+
+          <div class="filters-grid">
+            <div class="form-row">
+              <label for="f-tema">Tema</label>
+              <select id="f-tema" class="filter">
+                <option value="">Todos</option>
+                <option value="obras">Obras e manutenção</option>
+                <option value="solicitacao">Solicitação de manutenção</option>
+                <option value="termo">Termo de visita</option>
+                <option value="bi_manutencao">BI manutenção predial</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="f-escola">Escola / URE</label>
+              <select id="f-escola" class="filter">
+                <option value="">Todas</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="f-status">Situação / Status</label>
+              <select id="f-status" class="filter">
+                <option value="">Todos</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="cards-grid">
+          <article class="card kpi-card">
+            <span class="kpi-label">Registros</span>
+            <strong id="card-total" class="kpi-value">–</strong>
+            <span class="kpi-footer">Somatório de registros exibidos.</span>
+          </article>
+          <article class="card kpi-card">
+            <span class="kpi-label">Escolas atendidas</span>
+            <strong id="card-escolas" class="kpi-value">–</strong>
+            <span class="kpi-footer">Distintas dentro do filtro atual.</span>
+          </article>
+          <article class="card kpi-card">
+            <span class="kpi-label">Obras e manutenção</span>
+            <strong id="card-obras" class="kpi-value">–</strong>
+            <span id="card-obras-perc" class="kpi-footer">–% do total</span>
+          </article>
+          <article class="card kpi-card">
+            <span class="kpi-label">Solicitação de manutenção</span>
+            <strong id="card-solic" class="kpi-value">–</strong>
+            <span id="card-solic-perc" class="kpi-footer">–% do total</span>
+          </article>
+          <article class="card kpi-card">
+            <span class="kpi-label">Termo de visita</span>
+            <strong id="card-termo" class="kpi-value">–</strong>
+            <span id="card-termo-perc" class="kpi-footer">–% do total</span>
+          </article>
+          <article class="card kpi-card">
+            <span class="kpi-label">BI manutenção predial</span>
+            <strong id="card-bi-manut" class="kpi-value">–</strong>
+            <span id="card-bi-manut-perc" class="kpi-footer">–% do total</span>
+          </article>
+          <article class="card kpi-card">
+            <span class="kpi-label">Em andamento</span>
+            <strong id="card-andamento" class="kpi-value">–</strong>
+            <span id="card-andamento-perc" class="kpi-footer">–% do total</span>
+          </article>
+          <article class="card kpi-card">
+            <span class="kpi-label">Concluídos</span>
+            <strong id="card-concluido" class="kpi-value">–</strong>
+            <span id="card-concluido-perc" class="kpi-footer">–% do total</span>
+          </article>
+          <article class="card kpi-card">
+            <span class="kpi-label">Não atendidos</span>
+            <strong id="card-nao-atendido" class="kpi-value">–</strong>
+            <span id="card-nao-atendido-perc" class="kpi-footer"
+              >–% do total</span
+            >
+          </article>
+        </section>
+
+        <section class="charts-grid">
+          <article class="card">
+            <header class="card-header">
+              <h2>Distribuição por tema</h2>
+              <p>Quantidade de registros por tipo de demanda.</p>
+            </header>
+            <div class="chart-wrapper">
+              <canvas id="chartPorTema"></canvas>
+            </div>
+          </article>
+          <article class="card">
+            <header class="card-header">
+              <h2>Status das demandas</h2>
+              <p>Proporção de registros por situação.</p>
+            </header>
+            <div class="chart-wrapper">
+              <canvas id="chartStatus"></canvas>
+            </div>
+          </article>
+        </section>
+
+        <section class="card">
+          <header class="card-header">
+            <h2>Últimos registros</h2>
+            <p>Lista completa dos registros mais recentes.</p>
+          </header>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tema</th>
+                  <th>Escola / URE</th>
+                  <th>Descrição</th>
+                  <th>Situação / Status</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-registros"></tbody>
+            </table>
+            <p id="empty-state" class="empty-state">Carregando registros...</p>
+          </div>
+        </section>
+      </div>
+      <div id="view-patrimonio" class="view-section">
+        <header class="card-header" style="margin-bottom: 1rem">
+          <h2>Gestão de Patrimônio</h2>
+          <p>Acesse os manuais, modelos e passo-a-passo para regularização.</p>
         </header>
 
-        <div class="filters-grid">
-          <div class="form-row">
-            <label for="f-tema">Tema</label>
-            <select id="f-tema" class="filter">
-              <option value="">Todos</option>
-              <option value="obras">Obras e manutenção</option>
-              <option value="solicitacao">Solicitação de manutenção</option>
-              <option value="termo">Termo de visita</option>
-              <option value="bi_manuntecao">BI manutenção predial</option>
-            </select>
-          </div>
+        <div class="docs-grid">
+          <article class="doc-card">
+            <h3>🎁 Doação de Bens Adquiridos</h3>
+            <ul class="doc-list">
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2019/07/manual-doao-de-bens-mveis-2015.pdf"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-pdf">📕</span> Manual de doação de
+                  bens móveis
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/08/modelo-escola-com-decreto-2019.docx"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-word">📘</span> Modelo em WORD para
+                  doação PDDE
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/3--passo-a-passo-para-elaborar-processo-de-doao-pdde-no-sei.pdf"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-pdf">📕</span> Passo a passo PDDE
+                  no SEI
+                </a>
+              </li>
+            </ul>
+          </article>
 
-          <div class="form-row">
-            <label for="f-escola">Escola / URE</label>
-            <select id="f-escola" class="filter">
-              <option value="">Todas</option>
-            </select>
-          </div>
+          <article class="doc-card" style="grid-row: span 2">
+            <h3>📦 Excedentes e Inservíveis</h3>
+            <ul class="doc-list">
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/4--apostila-parte-do-supervisor.docx"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-word">📘</span> Apostila do
+                  Supervisor
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/5--modelo-para-primeira-visita-do-supervisor.docx"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-word">📘</span> Modelo 1ª Visita
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/6--modelo-segunda-visita-do-supervisor.docx"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-word">📘</span> Modelo 2ª Visita
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/7--manual-material-excedente-resoluo-41.pdf"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-pdf">📕</span> Manual material
+                  excedente
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/8--passo-a-passo-para-elaborar-processos-de-inservveis-no-sei.pdf"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-pdf">📕</span> Passo a passo
+                  inservíveis
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/9--etapas-do-processo-de-inservveis.docx"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-word">📘</span> Etapas do processo
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/mod-1-arrolamento-escola.docx"
+                  target="_blank"
+                  class="doc-link"
+                  ><span class="doc-icon type-word">📘</span> Modelo 1 –
+                  Arrolamento</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/mod-2-informao-escola.docx"
+                  target="_blank"
+                  class="doc-link"
+                  ><span class="doc-icon type-word">📘</span> Modelo 2 –
+                  Informação</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/mod-3-ofcio-apm-escola.docx"
+                  target="_blank"
+                  class="doc-link"
+                  ><span class="doc-icon type-word">📘</span> Modelo 3 – Ofício
+                  APM</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/mod-4-deliberao-do-conselho-escola.docx"
+                  target="_blank"
+                  class="doc-link"
+                  ><span class="doc-icon type-word">📘</span> Modelo 4 – ATA
+                  Deliberação</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/mod-10-ata-recebimento-apm-escola.docx"
+                  target="_blank"
+                  class="doc-link"
+                  ><span class="doc-icon type-word">📘</span> Modelo 10 – ATA
+                  Recebimento</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/mod-11-recibo-apm-escola.docx"
+                  target="_blank"
+                  class="doc-link"
+                  ><span class="doc-icon type-word">📘</span> Modelo 11 – Recibo
+                  APM</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/mod-12-info-diretor-escola.docx"
+                  target="_blank"
+                  class="doc-link"
+                  ><span class="doc-icon type-word">📘</span> Modelo 12 –
+                  Informação do Diretor</a
+                >
+              </li>
+            </ul>
+          </article>
 
-          <div class="form-row">
-            <label for="f-status">Situação / Status</label>
-            <select id="f-status" class="filter">
-              <option value="">Todos</option>
-            </select>
-          </div>
+          <article class="doc-card">
+            <h3>🚨 Furto</h3>
+            <ul class="doc-list">
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/11--manualde-elaborao-furto-1-nad.docx"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-word">📘</span> Modelo Word –
+                  Processo de furto
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/10--modelo-sei-furto.pdf"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-pdf">📕</span> Manual SEI – Furto
+                </a>
+              </li>
+            </ul>
+          </article>
+
+          <article class="doc-card">
+            <h3>📋 Inventário</h3>
+            <ul class="doc-list">
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/13--planilha-de-inventrio.xls"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-xls">📗</span> Planilha de
+                  Inventário
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://midiasstoragesec.blob.core.windows.net/001/2025/07/12--passo-a-passo-sei-para-inventrio.pdf"
+                  target="_blank"
+                  class="doc-link"
+                >
+                  <span class="doc-icon type-pdf">📕</span> Passo a passo SEI –
+                  Inventário
+                </a>
+              </li>
+            </ul>
+          </article>
         </div>
-      </section>
-
-      <section class="cards-grid">
-        <article class="card kpi-card">
-          <span class="kpi-label">Registros</span>
-          <strong id="card-total" class="kpi-value">–</strong>
-          <span class="kpi-footer">Somatório de registros exibidos.</span>
-        </article>
-
-        <article class="card kpi-card">
-          <span class="kpi-label">Escolas atendidas</span>
-          <strong id="card-escolas" class="kpi-value">–</strong>
-          <span class="kpi-footer">Distintas dentro do filtro atual.</span>
-        </article>
-
-        <article class="card kpi-card">
-          <span class="kpi-label">Obras e manutenção</span>
-          <strong id="card-obras" class="kpi-value">–</strong>
-          <span id="card-obras-perc" class="kpi-footer">–% do total</span>
-        </article>
-
-        <article class="card kpi-card">
-          <span class="kpi-label">Solicitação de manutenção</span>
-          <strong id="card-solic" class="kpi-value">–</strong>
-          <span id="card-solic-perc" class="kpi-footer">–% do total</span>
-        </article>
-
-        <article class="card kpi-card">
-          <span class="kpi-label">Termo de visita</span>
-          <strong id="card-termo" class="kpi-value">–</strong>
-          <span id="card-termo-perc" class="kpi-footer">–% do total</span>
-        </article>
-
-        <article class="card kpi-card">
-          <span class="kpi-label">BI manutenção predial</span>
-          <strong id="card-bi-manut" class="kpi-value">–</strong>
-          <span id="card-bi-manut-perc" class="kpi-footer">–% do total</span>
-        </article>
-
-        <article class="card kpi-card">
-          <span class="kpi-label">Em andamento</span>
-          <strong id="card-andamento" class="kpi-value">–</strong>
-          <span id="card-andamento-perc" class="kpi-footer">–% do total</span>
-        </article>
-
-        <article class="card kpi-card">
-          <span class="kpi-label">Concluídos</span>
-          <strong id="card-concluido" class="kpi-value">–</strong>
-          <span id="card-concluido-perc" class="kpi-footer">–% do total</span>
-        </article>
-
-        <article class="card kpi-card">
-          <span class="kpi-label">Não atendidos</span>
-          <strong id="card-nao-atendido" class="kpi-value">–</strong>
-          <span id="card-nao-atendido-perc" class="kpi-footer"
-            >–% do total</span
-          >
-        </article>
-      </section>
-
-      <section class="charts-grid">
-        <article class="card">
-          <header class="card-header">
-            <h2>Distribuição por tema</h2>
-            <p>Quantidade de registros por tipo de demanda.</p>
-          </header>
-          <div class="chart-wrapper">
-            <canvas id="chartPorTema"></canvas>
-          </div>
-        </article>
-
-        <article class="card">
-          <header class="card-header">
-            <h2>Status das demandas</h2>
-            <p>Proporção de registros por situação.</p>
-          </header>
-          <div class="chart-wrapper">
-            <canvas id="chartStatus"></canvas>
-          </div>
-        </article>
-      </section>
-
-      <section class="card">
-        <header class="card-header">
-          <h2>Últimos registros</h2>
+      </div>
+      <div id="view-fiscalizacao" class="view-section">
+        <div class="empty-screen-placeholder">
+          <h2>📋 Fiscalização e Contratos</h2>
           <p>
-            Lista dos registros mais recentes, considerando os filtros
-            aplicados.
+            Esta área está destinada aos documentos e processos de fiscalização.
           </p>
-        </header>
-
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Tema</th>
-                <th>Escola / URE</th>
-                <th>Descrição</th>
-                <th>Situação / Status</th>
-                <th>Data</th>
-              </tr>
-            </thead>
-            <tbody id="tabela-registros"></tbody>
-          </table>
-          <p id="empty-state" class="empty-state">Carregando registros...</p>
+          <div style="margin-top: 1rem; font-size: 3rem">🚧</div>
         </div>
-      </section>
+      </div>
     </main>
 
     <footer class="site-footer">
